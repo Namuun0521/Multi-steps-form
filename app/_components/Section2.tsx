@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { any, z } from "zod";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +19,9 @@ import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Header } from "./Header";
 import { SubHeader } from "./SubHeader";
-import { StepProps } from "./Section1";
-import { useRef } from "react";
+
+import { useContext, useRef } from "react";
+import { StepContext } from "../page";
 
 const formSchema = z
   .object({
@@ -29,128 +31,153 @@ const formSchema = z
     phonenumber: z.string().min(8, {
       message: "Please enter a valid phone number.",
     }),
-    Password: z.string().min(2, {
+    password: z.string().min(2, {
       message: "Password must include letters and numbers.",
     }),
-    Confirmpassword: z.string().min(2, {
+    confirmpassword: z.string().min(2, {
       message: "Passwords do not match. Please try again.",
     }),
   })
-  .refine((data) => data.Password === data.Confirmpassword, {
+  .refine((data) => data.password === data.confirmpassword, {
     message: "Passwords do not match. Please try again.",
     path: ["Confirmpassword"],
   });
 
-export const Section2 = ({ step, setStep }: StepProps) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+export const variants = {
+  enter: { opacity: 1, x: 0, transition: { duration: 1, delay: 1 } },
+  exit: { opacity: 0, x: -100, transition: { duration: 1 }, delay: 1 },
+  initial: { opacity: 0, x: 100 },
+};
+
+export const Section2 = () => {
+  const { data, handleNext, handleBack, setData } = useContext(StepContext);
+
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      phonenumber: "",
-      Password: "",
-      Confirmpassword: "",
+      email: data.email,
+      phonenumber: data.phonenumber,
+      password: data.password,
+      confirmpassword: data.confirmpass,
     },
   });
 
+  console.log(form.formState.errors);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("agadg");
     console.log(values);
-    setStep(step + 1);
+    setData((prev) => ({
+      ...prev,
+      email: values.email,
+      phonenumber: values.phonenumber,
+      password: values.password,
+      confirmpassword: values.confirmpassword,
+    }));
+    handleNext();
   }
-  const backChange = () => {
-    setStep(step - 1);
-  };
   return (
-    <div className="w-screen h-screen bg-[#F4F4F4] flex flex-col justify-center items-center ">
-      <div className="w-[480px]  bg-white flex flex-col ">
-        <Header />
-        <SubHeader />
-        <div className="px-8 ">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Placeholder" {...field} />
-                    </FormControl>
+    <motion.div
+      initial="initial"
+      animate="enter"
+      exit="exit"
+      variants={variants}
+    >
+      <div className="w-screen h-screen bg-[#F4F4F4] flex flex-col justify-center items-center ">
+        <div className="w-[480px]  bg-white flex flex-col ">
+          <Header />
+          <SubHeader />
+          <div className="px-8 ">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Placeholder" {...field} />
+                      </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phonenumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone number *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Placeholder" {...field} />
-                    </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phonenumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone number *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Placeholder" {...field} />
+                      </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="Password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Placeholder"
-                        {...field}
-                      />
-                    </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password *</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Placeholder"
+                          {...field}
+                        />
+                      </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="Confirmpassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm password*</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Placeholder"
-                        {...field}
-                      />
-                    </FormControl>
+                <FormField
+                  control={form.control}
+                  name="confirmpassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm password*</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Placeholder"
+                          {...field}
+                        />
+                      </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <div className="flex gap-2">
-                <Button
-                  className="h-11 w-32 bg-white text-black border border-[#CBD5E1] text-[16px] mb-8 "
-                  type="button"
-                  onClick={backChange}
-                >
-                  <ChevronLeft />
-                  Back
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    className="h-11 w-32 bg-white text-black border border-[#CBD5E1] text-[16px] mb-8 "
+                    type="button"
+                    onClick={handleBack}
+                  >
+                    <ChevronLeft />
+                    Back
+                  </Button>
 
-                <Button className="text-white font-medium text-base h-11 w-[280px] mb-8 flex ">
-                  Continue 2/3 <ChevronRight />
-                </Button>
-              </div>
-            </form>
-          </Form>
+                  <Button className="text-white font-medium text-base h-11 w-[280px] mb-8 flex ">
+                    Continue 2/3 <ChevronRight />
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
