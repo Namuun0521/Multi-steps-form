@@ -1,6 +1,10 @@
+import { useEffect } from "react";
 import { Header } from "./Header";
 
 export const Success = () => {
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
   return (
     <div className="w-screen h-screen bg-[#F4F4F4] flex flex-col justify-center items-center ">
       <div className="w-[480px]  bg-white flex flex-col ">

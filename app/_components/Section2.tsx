@@ -25,7 +25,7 @@ import { StepContext } from "../page";
 
 const formSchema = z
   .object({
-    email: z.string().min(2, {
+    email: z.string().trim().email({
       message: "Please provide a valid email address.",
     }),
     phonenumber: z.string().min(8, {
