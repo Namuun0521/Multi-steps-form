@@ -24,7 +24,7 @@ type StepContextType = {
 };
 
 export const StepContext = createContext<StepContextType>(
-  {} as StepContextType
+  {} as StepContextType,
 );
 
 export type Data = {
@@ -76,7 +76,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!isReady) return;
-    localStorage.setItem("data", JSON.stringify(data));
+    // localStorage.setItem("data", JSON.stringify(data));
   }, [data, isReady]);
 
   if (!isReady) return null;

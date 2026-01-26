@@ -67,6 +67,8 @@ export const Section2 = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("agadg");
     console.log(values);
+    localStorage.setItem("SecondStep", JSON.stringify(values));
+
     setData((prev) => ({
       ...prev,
       email: values.email,
