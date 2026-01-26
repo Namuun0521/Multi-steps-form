@@ -40,7 +40,7 @@ const formSchema = z
   })
   .refine((data) => data.password === data.confirmpassword, {
     message: "Passwords do not match. Please try again.",
-    path: ["Confirmpassword"],
+    path: ["confirmpassword"],
   });
 
 export const variants = {
